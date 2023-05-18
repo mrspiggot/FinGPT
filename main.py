@@ -5,6 +5,7 @@ from PIL import Image
 import yfinance as yf
 from yahooquery import Ticker
 from datetime import datetime, timedelta
+from edgar import Company, TXTML
 
 from dotenv import load_dotenv
 import os
@@ -16,7 +17,7 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
 from langchain.chains.summarize import load_summarize_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter, PythonCodeTextSplitter
-from edgar import Company, TXTML
+
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 load_dotenv()
@@ -49,15 +50,11 @@ def get_recommendation(stock_cik, question):
 
     llm = OpenAI(temperature=0.15, openai_api_key=openai_api_key)
 
-    num_tokens = llm.get_num_tokens(text)
     lts = int(len(text) / 3)
     lte = int(lts * 2)
 
     text_splitter = PythonCodeTextSplitter(chunk_size=3000, chunk_overlap=300)
     docs = text_splitter.create_documents([text[lts:lte]])
-
-    chain = load_summarize_chain(llm=llm, chain_type='map_reduce')
-    output = chain.run(docs)
 
     # Get your embeddings engine ready
     embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
