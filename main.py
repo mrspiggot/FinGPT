@@ -1,3 +1,6 @@
+# Using this code as is will incur OpenAI fees
+# If you do not wish to incur these fees you will need to select an alternative LLM
+
 import streamlit as st
 import pandas as pd
 from PIL import Image
